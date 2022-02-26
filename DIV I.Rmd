@@ -1,0 +1,119 @@
+---
+title: "Div I Project"
+author: "Jacqueline Chen"
+date: "October 9, 2019"
+output: 
+  html_document:
+    toc: yes
+    toc_float: yes
+    code_folding: show
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Metadata
+
+### Purpose
+
+What is the purpose of your function? What problem does it solve? When would you use it? 
+
+My function works to get all the possible combinations for drawing a specified number of elements in a given list, where order doesn't matter. It helps solve problems related to organization or probability. I would use it when figuring out how many different teams of 3 people can we pick from a total group of 15 or what is the probability that a 4 digit password has no repeated digits. 
+
+### Dependencies/Setup
+
+> Load any packages or other pre-processing steps that are necessary to make your function work in the chunk below. The chunk should be as [parsimonious](https://en.wiktionary.org/wiki/parsimonious) as possible.
+```{r load, message=FALSE}
+library(tidyverse)
+```
+
+
+### Arguments
+
+List the arguments your function takes. Specify the data type, default value (if applicable), and any other assumptions you are making about the value of each argument.
+
+- `x`: a list of numeric or character vectors
+- `r``: a numeric vector
+
+### Result
+
+What does your function return? Specify the data type and any other assumptions you are making. 
+
+-It returns a numeric vector which represents the number of all the possible combinations of elements from the list `x` and it also returns characters where each of them represents a plausible combination. 
+
+## Code
+
+Paste your code in the chunk below. 
+```{r code}
+combination <- function(x, r) {
+  n = length(x)
+  
+  #The number of possible combinations of r elements in list x: 
+  nCr = factorial(n)/(factorial(r)*factorial(n-r))
+  print(nCr)
+  
+  #Print all possible combinations: 
+  h = 0
+  g = 1
+
+  while (h < n-r+2) { 
+  h = h + 1
+  e = h
+  g = h + 1
+  
+    while (e < n-r+2){
+      e = e + 1 
+      a = paste(x[h], x[e], sep="")
+      
+      while (nchar(a) < r){ 
+        g = g + 1
+        a = paste(a, x[g], sep="")}
+        print(a)
+
+      if ( r > 2) {
+        f = g + 1
+      if ( h < n-1 ){
+          if ( f == n) {
+            print(paste(str_sub(a, 1, -2), x[f], sep=""))}
+    
+          if ( f < n) {
+            for (k in seq(f,n)){
+            print(paste(str_sub(a, 1, -2), x[k], sep=""))
+            }}}
+        }}}
+}
+```
+
+## Examples
+
+> Give 2-3 examples of typical usage of your function. Describe in words what is being illustrated.
+
+This shows the number of possible arrangements by selecting 3 elements from a list of length 6 with no repetition; then it prints out all the 20 possible arrangements. 
+
+```{r ex1}
+# First Example 
+x = c("a", "b", "c", "d", "e", "f")
+y = combination(x, 3)
+```
+
+This shows the number of possible arrangements by selecting 3 elements from a list of length 4 with no repetition; then it prints out all the 4 possible arrangements. 
+
+```{r ex2}
+#Second Example 
+x = c(1,2,3,4)
+combination(x, 3)
+```
+
+## Testing
+
+Provide a few examples of outputs that you expect your function will match, given a specific input. [Best if you use the [`testthat` package](https://github.com/r-lib/testthat).] 
+
+```{r tests, message=FALSE}
+# I would expect the output of combination(c(1,2,3), 2) to be: 3, 12, 13, 23
+combination(c(1,2,3), 2)
+
+# I would expect the output of combination(c("c","a","b","d","e" ), 2) to be: 10, cab, cad, cae, cbd, cbe, cde, abd, abe, ade, bde, 
+combination(c("c","a","b","d","e") , 3) 
+
+```
